@@ -7,6 +7,14 @@ const gameboard = (function () {
 
   const getGameArea = () => gameArea;
 
+  const playTurn = (row, column) => {
+    if (turnCounter[0] === "") {
+      console.log("Choose your symbol!");
+    } else {
+      play(row, column, turnCounter[0]);
+    }
+  };
+
   const playX = (row, column) => play(row, column, "X");
 
   const playO = (row, column) => play(row, column, "O");
@@ -14,11 +22,28 @@ const gameboard = (function () {
   const play = (row, column, symbol) => {
     if (gameArea[row][column] === "") {
       gameArea[row][column] = symbol;
+      const checkWinArray = populateCheckWinArray();
+      checkWin(checkWinArray, symbol);
+      changeTurn();
     } else {
       console.log("Cell is already populated!");
     }
-    const checkWinArray = populateCheckWinArray();
-    checkWin(gameArea, checkWinArray, symbol);
+  };
+
+  const turnCounter = [""];
+
+  const getTurnCounter = () => turnCounter[0];
+
+  const assignTurn = (symbol) => {
+    turnCounter[0] = symbol;
+  };
+
+  const changeTurn = () => {
+    if (turnCounter[0] === "O") {
+      turnCounter[0] = "X";
+    } else {
+      turnCounter[0] = "O";
+    }
   };
 
   const populateCheckWinArray = () => {
@@ -45,7 +70,7 @@ const gameboard = (function () {
     return winArr;
   };
 
-  const checkWin = (gameArea, checkWinArray, symbol) => {
+  const checkWin = (checkWinArray, symbol) => {
     for (let i = 0; i < checkWinArray.length; i++) {
       const result = checkWinArray[i].filter((element) => element === symbol);
       if (result.length === 3) {
@@ -55,9 +80,36 @@ const gameboard = (function () {
     }
   };
 
-  return { getGameArea, playO, playX };
+  const checkDraw = (gameArea) => {
+    // Add function to check if the game is a draw
+    // Maybe check if no elements in gameArea are empty ""
+  };
+
+  const clearGame = () => {
+    for (let i = 0; i <= 2; i++) {
+      for (let j = 0; j <= 2; j++) {
+        gameArea[i][j] = "";
+      }
+    }
+    turnCounter[0] = "";
+  };
+
+  return {
+    getGameArea,
+    playO,
+    playX,
+    playTurn,
+    clearGame,
+    assignTurn,
+    getTurnCounter,
+  };
 })();
 
-function createPlayer(name) {
-  const playerName = name;
-}
+const assignTurn = document.querySelector("#assign-turn");
+
+assignTurn.addEventListener("click", () => {
+  const symbol = prompt(`Please choose "O" or "X"`);
+  gameboard.assignTurn(symbol);
+});
+
+gameboard.assignTurn("O"); // Debug
