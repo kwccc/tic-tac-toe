@@ -5,7 +5,9 @@ const gameboard = (function () {
     ["", "", ""],
   ];
 
-  const getGameArea = () => gameArea;
+  const getGameArea = () => {
+    gameArea.forEach((row) => console.log(row));
+  };
 
   const playTurn = (row, column) => {
     if (turnCounter[0] === "") {
@@ -22,8 +24,10 @@ const gameboard = (function () {
   const play = (row, column, symbol) => {
     if (gameArea[row][column] === "") {
       gameArea[row][column] = symbol;
+      getGameArea();
       const checkWinArray = populateCheckWinArray();
       checkWin(checkWinArray, symbol);
+      checkDraw();
       changeTurn();
     } else {
       console.log("Cell is already populated!");
@@ -76,13 +80,18 @@ const gameboard = (function () {
       if (result.length === 3) {
         console.log(`Win for ${symbol}!`);
       }
-      console.log(result);
+      // console.log(result);
     }
   };
 
-  const checkDraw = (gameArea) => {
+  const checkDraw = () => {
     // Add function to check if the game is a draw
     // Maybe check if no elements in gameArea are empty ""
+    if (
+      gameArea.filter((row) => row.some((cell) => cell === "")).length === 0
+    ) {
+      console.log(`It's a draw!`);
+    }
   };
 
   const clearGame = () => {
@@ -106,10 +115,13 @@ const gameboard = (function () {
 })();
 
 const assignTurn = document.querySelector("#assign-turn");
+const newGame = document.querySelector("#new-game");
 
 assignTurn.addEventListener("click", () => {
   const symbol = prompt(`Please choose "O" or "X"`);
   gameboard.assignTurn(symbol);
 });
+
+newGame.addEventListener("click", () => gameboard.clearGame());
 
 gameboard.assignTurn("O"); // Debug
