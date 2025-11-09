@@ -1,0 +1,18 @@
+#game-board {
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 50vw;
+  height: 50vw;
+}
+
+.game-cell {
+  /* width: 20px;
+  height: 20px; */
+  /* background-color: blue; */
+  border: 1px solid black;
+}
+
+#new-game {
+  margin: auto;
+}

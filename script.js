@@ -34,7 +34,7 @@ const gameboard = (function () {
     }
   };
 
-  const turnCounter = [""];
+  const turnCounter = ["O"];
 
   const getTurnCounter = () => turnCounter[0];
 
@@ -60,7 +60,7 @@ const gameboard = (function () {
     const vArr2 = [];
     const dArr0 = [];
     const dArr1 = [];
-    for (let i = 0; i <= 2; i++) {
+    for (let i = 0; i < 3; i++) {
       hArr0.push(gameArea[0][i]);
       hArr1.push(gameArea[1][i]);
       hArr2.push(gameArea[2][i]);
@@ -85,8 +85,6 @@ const gameboard = (function () {
   };
 
   const checkDraw = () => {
-    // Add function to check if the game is a draw
-    // Maybe check if no elements in gameArea are empty ""
     if (
       gameArea.filter((row) => row.some((cell) => cell === "")).length === 0
     ) {
@@ -95,12 +93,12 @@ const gameboard = (function () {
   };
 
   const clearGame = () => {
-    for (let i = 0; i <= 2; i++) {
-      for (let j = 0; j <= 2; j++) {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
         gameArea[i][j] = "";
       }
     }
-    turnCounter[0] = "";
+    turnCounter[0] = "O";
   };
 
   return {
@@ -114,14 +112,35 @@ const gameboard = (function () {
   };
 })();
 
-const assignTurn = document.querySelector("#assign-turn");
 const newGame = document.querySelector("#new-game");
 
-assignTurn.addEventListener("click", () => {
-  const symbol = prompt(`Please choose "O" or "X"`);
-  gameboard.assignTurn(symbol);
+newGame.addEventListener("click", () => {
+  gameboard.clearGame();
+  setUpBoard();
 });
 
-newGame.addEventListener("click", () => gameboard.clearGame());
+const gameboardElement = document.querySelector("#game-board");
 
-gameboard.assignTurn("O"); // Debug
+const setUpBoard = () => {
+  gameboardElement.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      const gameCell = document.createElement("div");
+      gameCell.classList = "game-cell";
+      // gameCell.setAttribute("data-row", i);
+      gameCell.dataset.row = i;
+      // gameCell.setAttribute("data-column", j);
+      gameCell.dataset.column = j;
+      gameboardElement.appendChild(gameCell);
+    }
+  }
+};
+
+setUpBoard();
+
+gameboardElement.addEventListener("click", (e) => {
+  const row = e.target.dataset.row;
+  const column = e.target.dataset.column;
+  e.target.textContent = gameboard.getTurnCounter();
+  gameboard.playTurn(row, column);
+});
