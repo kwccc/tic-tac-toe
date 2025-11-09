@@ -10,11 +10,7 @@ const gameboard = (function () {
   };
 
   const playTurn = (row, column) => {
-    if (turnCounter[0] === "") {
-      console.log("Choose your symbol!");
-    } else {
-      play(row, column, turnCounter[0]);
-    }
+    play(row, column, turnCounter[0]);
   };
 
   const playX = (row, column) => play(row, column, "X");
@@ -24,13 +20,13 @@ const gameboard = (function () {
   const play = (row, column, symbol) => {
     if (gameArea[row][column] === "") {
       gameArea[row][column] = symbol;
-      getGameArea();
+      // getGameArea();
       const checkWinArray = populateCheckWinArray();
       checkWin(checkWinArray, symbol);
       checkDraw();
       changeTurn();
     } else {
-      console.log("Cell is already populated!");
+      return "Cell is already populated!";
     }
   };
 
@@ -80,7 +76,6 @@ const gameboard = (function () {
       if (result.length === 3) {
         console.log(`Win for ${symbol}!`);
       }
-      // console.log(result);
     }
   };
 
@@ -127,10 +122,9 @@ const setUpBoard = () => {
     for (let j = 0; j < 3; j++) {
       const gameCell = document.createElement("div");
       gameCell.classList = "game-cell";
-      // gameCell.setAttribute("data-row", i);
       gameCell.dataset.row = i;
-      // gameCell.setAttribute("data-column", j);
       gameCell.dataset.column = j;
+      gameCell.textContent = " ";
       gameboardElement.appendChild(gameCell);
     }
   }
@@ -141,6 +135,7 @@ setUpBoard();
 gameboardElement.addEventListener("click", (e) => {
   const row = e.target.dataset.row;
   const column = e.target.dataset.column;
-  e.target.textContent = gameboard.getTurnCounter();
+  const turn = gameboard.getTurnCounter();
   gameboard.playTurn(row, column);
+  e.target.textContent = turn;
 });
