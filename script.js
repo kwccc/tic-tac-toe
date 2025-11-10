@@ -18,17 +18,29 @@ const gameboard = (function () {
   const playO = (row, column) => play(row, column, "O");
 
   const play = (row, column, symbol) => {
-    if (gameArea[row][column] === "") {
-      gameArea[row][column] = symbol;
-      // getGameArea();
-      const checkWinArray = populateCheckWinArray();
-      checkWin(checkWinArray, symbol);
-      checkDraw();
-      changeTurn();
-    } else {
-      return "Cell is already populated!";
+    if (gameArea[row][column] !== "") return;
+
+    gameArea[row][column] = symbol;
+    // getGameArea();
+    const checkWinArray = populateCheckWinArray();
+    const winningSymbol = checkWin(checkWinArray, symbol);
+    if (winningSymbol) {
+      win = winningSymbol;
     }
+    const isDraw = checkDraw();
+    if (isDraw) {
+      draw = isDraw;
+    }
+    changeTurn();
   };
+
+  let win = "";
+
+  const getWin = () => win;
+
+  let draw = false;
+
+  const getDraw = () => draw;
 
   const turnCounter = ["O"];
 
@@ -74,17 +86,15 @@ const gameboard = (function () {
     for (let i = 0; i < checkWinArray.length; i++) {
       const result = checkWinArray[i].filter((element) => element === symbol);
       if (result.length === 3) {
-        console.log(`Win for ${symbol}!`);
+        return symbol;
       }
     }
   };
 
   const checkDraw = () => {
-    if (
+    return (
       gameArea.filter((row) => row.some((cell) => cell === "")).length === 0
-    ) {
-      console.log(`It's a draw!`);
-    }
+    );
   };
 
   const clearGame = () => {
@@ -94,6 +104,8 @@ const gameboard = (function () {
       }
     }
     turnCounter[0] = "O";
+    win = "";
+    draw = false;
   };
 
   return {
@@ -104,6 +116,8 @@ const gameboard = (function () {
     clearGame,
     assignTurn,
     getTurnCounter,
+    getWin,
+    getDraw,
   };
 })();
 
@@ -111,6 +125,8 @@ const newGame = document.querySelector("#new-game");
 
 newGame.addEventListener("click", () => {
   gameboard.clearGame();
+  gameMessage.style.color = "black";
+  gameMessage.textContent = "O to start";
   setUpBoard();
 });
 
@@ -124,18 +140,34 @@ const setUpBoard = () => {
       gameCell.classList = "game-cell";
       gameCell.dataset.row = i;
       gameCell.dataset.column = j;
-      gameCell.textContent = " ";
       gameboardElement.appendChild(gameCell);
     }
   }
+  gameboardElement.style.backgroundColor = "white";
 };
 
 setUpBoard();
 
+const gameMessage = document.querySelector("#game-message");
+
 gameboardElement.addEventListener("click", (e) => {
+  if (gameboard.getWin() !== "") {
+    return;
+  }
   const row = e.target.dataset.row;
   const column = e.target.dataset.column;
   const turn = gameboard.getTurnCounter();
   gameboard.playTurn(row, column);
-  e.target.textContent = turn;
+  if (turn !== gameboard.getTurnCounter()) {
+    e.target.textContent = turn;
+    gameMessage.textContent = `${gameboard.getTurnCounter()}'s turn`;
+  }
+  if (gameboard.getWin() !== "") {
+    gameMessage.style.color = "green";
+    gameMessage.textContent = `${gameboard.getWin()} wins!`;
+  }
+  if (gameboard.getDraw()) {
+    gameMessage.textContent = `It's a tie!`;
+    gameboardElement.style.backgroundColor = "lightgrey";
+  }
 });

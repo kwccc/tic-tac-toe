@@ -13,8 +13,8 @@ h2 {
   margin: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  width: 50vw;
-  height: 50vw;
+  width: min(50vw, 506px);
+  height: min(50vw, 506px);
 }
 
 .game-cell {
@@ -22,9 +22,9 @@ h2 {
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  font-size: 5rem;
-  width: calc(50vw / 3 - 2px);
-  height: calc(50vw / 3 - 2px);
+  font-size: min(10vw, 100px);
+  width: min(calc(50vw / 3 - 2px), 166px);
+  height: min(calc(50vw / 3 - 2px), 166px);
 }
 
 #button-section {
